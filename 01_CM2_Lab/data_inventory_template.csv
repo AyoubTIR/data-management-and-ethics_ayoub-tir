@@ -1,0 +1,8 @@
+dataset,file_or_table,description_one_sentence,business_domain,data_owner,data_steward,data_custodian,contains_personal_data_Y_N,sensitivity_level,refresh_frequency,row_count,issues_spotted
+customers,data/customers.csv | raw.customers, Registered shopfast customers witht their details, Sales, Analytics, Data engineer, Y, Restricted, 1241,,,
+products,data/products.csv | raw.products, Catalog of shopfast products with their information, Marchandising, Analytics, Data engineer, N, Internal, 52,,,
+orders,data/orders.csv | raw.orders, One row per passed order with its information, Sales, Analytics, Data engineer, Y, Confidential, 5207,,,
+order_items,data/order_items.csv | raw.order_items, Details about a product inside an order, Sales, Analytics, Data engineer, N, Internal, 9193,,,
+payments,data/payments.csv | raw.payments, One row per payment with its information, Finance, Analytics, Data engineer, Y, Confidential, 4902,,,
+support_tickets,data/support_tickets.csv | raw.support_tickets, List of support tickets requests with their information, Customer support, Analytics, Date engineer, Y, Restricted, 422,,,
+marketing_campaign_export,data/marketing_campaign_export.csv | raw.marketing_campaign_export, List of customers with the marketing selected marketing campaign alongside required contact info, Marketing, Analytics, Data engineer, Y, Confidential, 600,,,
