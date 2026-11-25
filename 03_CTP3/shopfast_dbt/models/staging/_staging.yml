@@ -23,20 +23,162 @@ models:
       # TODO: document first_name, last_name, phone, birth_date, city, country_code, signup_date,
       #       has_marketing_consent, loyalty_tier  (description + pii tag/classification where needed)
       # TODO: add a test: accepted_values on country_code (FR, DE, ES, BE) and on loyalty_tier
-
+      - name: first_name
+        description: "Customer first name, trimmed and title-cased."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: last_name
+        description: "Customer last name, trimmed and title-cased."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: phone
+        description: "Customer phone number as delivered by the CRM."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: birth_date
+        description: "Customer date of birth (DATE), parsed from 4 source formats. Used for age checks."
+        tags: ['pii']
+        meta: {classification: restricted}
+      - name: city
+        description: "City of the delivery address. Indirect identifier when combined with name or birth date."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: country_code
+        description: "ISO 3166-1 alpha-2 country code of the customer (FR, DE, ES, BE). Null if unknown."
+        meta: {classification: internal}
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['FR', 'DE', 'ES', 'BE']
+      - name: signup_date
+        description: "Date the customer account was created (DATE)."
+        meta: {classification: internal}
+      - name: has_marketing_consent
+        description: "True if the customer opted in to marketing emails (GDPR consent). Must be checked before any campaign."
+        meta: {classification: confidential}
+      - name: loyalty_tier
+        description: "Loyalty programme level: bronze, silver, gold or platinum."
+        meta: {classification: internal}
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['bronze', 'silver', 'gold', 'platinum']
+  
   - name: stg_orders
-    description: "TODO: one sentence a business user understands"
-    # TODO: meta owner / steward / domain / tier
+    description: "One row per customer order, cleaned from raw.orders (duplicate order_ids removed, status lower-cased, 'canceled' mapped to 'cancelled')."
+    meta:
+      owner: "Sara Martin (Head of Sales)"
+      steward: "Karim Benali (Analytics Engineer)"
+      domain: sales
+      tier: silver
     columns:
       - name: order_id
+        description: "Unique identifier of the order."
         data_tests: [unique, not_null]
       # TODO: document customer_id, order_date, status, channel, shipping_country, total_amount_eur
       # TODO: test accepted_values on status
+      - name: customer_id
+        description: "Customer who placed the order (FK to stg_customers). Pseudonymous identifier = still personal data under GDPR."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: order_date
+        description: "Date the order was placed (DATE). Null if the source value was missing or unparseable."
+        meta: {classification: internal}
+      - name: status
+        description: "Order lifecycle status: pending, shipped, delivered, cancelled or returned."
+        meta: {classification: internal}
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['pending', 'shipped', 'delivered', 'cancelled', 'returned']
+      - name: channel
+        description: "Sales channel: web, mobile_app or marketplace."
+        meta: {classification: internal}
+      - name: shipping_country
+        description: "ISO 3166-1 alpha-2 code of the delivery country (FR, DE, ES, BE)."
+        meta: {classification: internal}
+      - name: total_amount_eur
+        description: "Amount paid by the customer for the order, in EUROS with 2 decimals, INCLUDING VAT (20%) and shipping fees."
+        meta: {classification: confidential}
 
   - name: stg_order_items
     description: "One row per product line of an order."
+    meta:
+      owner: "Sara Martin (Head of Sales)"
+      steward: "Karim Benali (Analytics Engineer)"
+      domain: sales
+      tier: silver
+    columns:
+      - name: order_item_id
+        description: "Unique identifier of the order line."
+        data_tests: [unique, not_null]
+      - name: order_id
+        description: "Order this line belongs to (FK to stg_orders)."
+      - name: product_id
+        description: "Product sold on this line (FK to stg_products)."
+      - name: quantity
+        description: "Number of units ordered. Should be >= 1 (negative values found in source = data quality issue)."
+      - name: unit_price_eur
+        description: "Price of one unit at order time, in EUROS with 2 decimals, including VAT."
+        meta: {classification: confidential}
   - name: stg_payments
     description: "One row per payment event from the payment provider (captured or refunded)."
+    meta:
+      owner: "Paul Girard (Head of Finance)"
+      steward: "Karim Benali (Analytics Engineer)"
+      domain: finance
+      tier: silver
+    columns:
+      - name: payment_id
+        description: "Unique identifier of the payment event."
+        data_tests: [unique, not_null]
+      - name: order_id
+        description: "Order this payment relates to (FK to stg_orders)."
+      - name: payment_date
+        description: "Date the payment was captured or refunded (DATE)."
+        meta: {classification: internal}
+      - name: method
+        description: "Payment method: card, paypal, apple_pay or bank_transfer."
+        meta: {classification: internal}
+      - name: amount
+        description: "Payment amount in EUROS with 2 decimals (e.g. 184.31), NOT in cents. Always positive: the direction is given by payment_status."
+        meta: {classification: confidential, unit: EUR, decimals: 2}
+      - name: currency
+        description: "ISO 4217 currency code. Always EUR."
+        meta: {classification: internal}
+      - name: card_last4
+        description: "Last 4 digits of the payment card (null for non-card methods). Never store more digits (PCI-DSS)."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: payment_status
+        description: "captured = money received from the customer, refunded = money paid back to the customer."
+        meta: {classification: internal}
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['captured', 'refunded']
+
     # TODO: what is the UNIT of amount? Document it - this is the cents incident!
   - name: stg_products
     description: "Product catalogue with list prices."
+    meta:
+      owner: "Head of Merchandising"
+      steward: "Karim Benali (Analytics Engineer)"
+      domain: product
+      tier: silver
+    columns:
+      - name: product_id
+        description: "Unique identifier of the product."
+        data_tests: [unique, not_null]
+      - name: sku
+        description: "Stock keeping unit code (prefix should match the category: known inconsistency)."
+      - name: product_name
+        description: "Commercial name of the product."
+      - name: category
+        description: "Product category: Beauty, Books, Electronics, Fashion, Home or Sports."
+      - name: list_price_eur
+        description: "Current catalogue price in EUROS with 2 decimals, including VAT."
+      - name: supplier
+        description: "Company supplying the product."
+      - name: is_active
+        description: "True if the product is currently sold (source value 'Y')."

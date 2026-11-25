@@ -5,15 +5,75 @@ models:
     description: "One row per order with gross, refunded and net revenue. Source of the Sales dashboard and the Finance report."
     meta:
       owner: "Sara Martin (Head of Sales)"
+      steward: "Karim Benali (Analytics Engineer)"
       domain: sales
       tier: gold
     columns:
       - name: order_id
+        description: "Unique identifier of the order."
         data_tests: [unique, not_null]
+      - name: customer_id
+        description: "Customer who placed the order (FK to dim_customers). Pseudonymous = still personal data."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: order_date
+        description: "Date the order was placed (DATE)."
+      - name: status
+        description: "Order status: pending, shipped, delivered, cancelled or returned. Cancelled orders are NOT filtered out here."
+      - name: channel
+        description: "Sales channel: web, mobile_app or marketplace."
+      - name: shipping_country
+        description: "ISO 3166-1 alpha-2 code of the delivery country."
+      - name: gross_revenue_eur
+        description: "Order total paid by the customer, in EUROS with 2 decimals, INCLUDING VAT and shipping fees (= stg_orders.total_amount_eur)."
+        meta: {classification: confidential}
+      - name: refunded_eur
+        description: "Sum of refunded payments for the order, in EUROS with 2 decimals (0 if none)."
+        meta: {classification: confidential}
       - name: net_revenue_eur
         description: "TODO (Exercise 3): replace with the glossary term net_revenue using the doc() function"
+        meta: {classification: confidential}
       # TODO: document the other columns
 
   - name: dim_customers
-    description: "TODO"
+    description: "One row per customer account with lifetime metrics (orders, last order date, net revenue). Used by marketing and the churn model."
     # TODO: meta owner / steward / domain / tier, column docs, PII tags
+    meta:
+      owner: "Sara Martin (Head of Sales)"
+      steward: "Karim Benali (Analytics Engineer)"
+      domain: customer
+      tier: gold
+    columns:
+      - name: customer_id
+        description: "Technical identifier of the customer account."
+        tags: ['pii']
+        meta: {classification: confidential}
+        data_tests: [unique, not_null]
+      - name: first_name
+        description: "Customer first name."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: last_name
+        description: "Customer last name."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: email
+        description: "Login email, trimmed and lower-cased."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: country_code
+        description: "ISO 3166-1 alpha-2 country code (FR, DE, ES, BE). Null if unknown."
+      - name: loyalty_tier
+        description: "Loyalty programme level: bronze, silver, gold or platinum."
+      - name: signup_date
+        description: "Date the account was created (DATE)."
+      - name: has_marketing_consent
+        description: "True if the customer opted in to marketing (GDPR). Filter on it before any campaign."
+        meta: {classification: confidential}
+      - name: lifetime_orders
+        description: "Number of orders ever placed by the customer (all statuses, including cancelled)."
+      - name: last_order_date
+        description: "Date of the most recent order (DATE). Null if the customer never ordered. Basis of the 'active customer' rule (Exercise 3)."
+      - name: lifetime_net_revenue_eur
+        description: "Sum of net_revenue_eur over all orders of the customer, in EUROS excluding VAT (0 if none)."
+        meta: {classification: confidential}
