@@ -68,8 +68,6 @@ models:
   
   - name: stg_orders
     description: "One row per customer order, cleaned from raw.orders (duplicate order_ids removed, status lower-cased, 'canceled' mapped to 'cancelled')."
-    config:
-      tags: ['pii']
     meta:
       owner: "Sara Martin (Head of Sales)"
       steward: "Karim Benali (Analytics Engineer)"
@@ -127,8 +125,6 @@ models:
         meta: {classification: confidential}
   - name: stg_payments
     description: "One row per payment event from the payment provider (captured or refunded)."
-    config:
-      tags: ['pii']
     meta:
       owner: "Paul Girard (Head of Finance)"
       steward: "Karim Benali (Analytics Engineer)"

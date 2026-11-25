@@ -27,13 +27,14 @@ models:
       - name: shipping_country
         description: "ISO 3166-1 alpha-2 code of the delivery country."
       - name: gross_revenue_eur
-        description: "Order total paid by the customer, in EUROS with 2 decimals, INCLUDING VAT and shipping fees (= stg_orders.total_amount_eur)."
+        description: "{{ doc('gross_revenue') }}"
         meta: {classification: confidential}
       - name: refunded_eur
         description: "Sum of refunded payments for the order, in EUROS with 2 decimals (0 if none)."
         meta: {classification: confidential}
       - name: net_revenue_eur
-        description: "TODO (Exercise 3): replace with the glossary term net_revenue using the doc() function"
+        # TODO (Exercise 3): replace with the glossary term net_revenue using the doc() function -> done
+        description: "{{ doc('net_revenue') }}"
         meta: {classification: confidential}
       # TODO: document the other columns
 
@@ -77,7 +78,7 @@ models:
       - name: lifetime_orders
         description: "Number of orders ever placed by the customer (all statuses, including cancelled)."
       - name: last_order_date
-        description: "Date of the most recent order (DATE). Null if the customer never ordered. Basis of the 'active customer' rule (Exercise 3)."
+        description: "Date of the most recent order (DATE). Null if the customer never ordered. WARNING: includes cancelled orders, so it is NOT enough to compute 'active customer' (see glossary: active_customer)."
       - name: lifetime_net_revenue_eur
         description: "Sum of net_revenue_eur over all orders of the customer, in EUROS excluding VAT (0 if none)."
         meta: {classification: confidential}
