@@ -1,0 +1,7 @@
+# Impact note: payments.amount switches from euros to cents
+
+1. **What breaks:** `stg_payments.amount` feeds `fct_orders.refunded_eur` → `net_revenue_eur` → `dim_customers.lifetime_net_revenue_eur`. Refunds become ×100: total net revenue goes from +889,645 € to −12.2 M€ and ~700 orders turn negative. Gross revenue is unchanged, so the error is silent on the Sales dashboard.
+2. **Who is impacted (owners to warn):** Paul Girard (Finance monthly report: board + annual accounts, maturity high), Sara Martin (Sales dashboard, read daily by the CEO), Head of Data Science (churn model: refunded customers wrongly scored as zero-value).
+3. **Test to add before the change:** in `_staging.yml`, on `stg_payments.amount`: range 0 < amount ≤ 5,000 and batch mean between 50 and 1,000 € (the GX "smart" rules from CTP 2), so the cents batch is blocked at staging (severity Critical).
+4. **Who approves:** Paul Girard (Finance, owner of `stg_payments`) approves the change; Karim Benali (Steward) updates the documented unit, which stays "EUROS, 2 decimals".
+5. **Required action:** the payments team converts to euros before delivery, or keeps sending euros. Any unit change goes through a data contract version bump agreed by the owner — never a silent switch.

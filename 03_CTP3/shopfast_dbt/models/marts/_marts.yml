@@ -3,6 +3,8 @@ version: 2
 models:
   - name: fct_orders
     description: "One row per order with gross, refunded and net revenue. Source of the Sales dashboard and the Finance report."
+    config:
+      tags: ['pii']
     meta:
       owner: "Sara Martin (Head of Sales)"
       steward: "Karim Benali (Analytics Engineer)"
@@ -37,6 +39,8 @@ models:
 
   - name: dim_customers
     description: "One row per customer account with lifetime metrics (orders, last order date, net revenue). Used by marketing and the churn model."
+    config:
+      tags: ['pii']
     # TODO: meta owner / steward / domain / tier, column docs, PII tags
     meta:
       owner: "Sara Martin (Head of Sales)"
