@@ -1,0 +1,97 @@
+{
+  "expectations": [
+    {
+      "id": "d2fa69e8-dd82-4853-8413-b9fb71cac26a",
+      "kwargs": {
+        "column": "payment_id"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "efd8962a-5251-4f2f-9a9f-9cb9e0d33945",
+      "kwargs": {
+        "column": "payment_id"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_unique"
+    },
+    {
+      "id": "fba0ce9c-7918-46ba-851e-3065d0b5a981",
+      "kwargs": {
+        "column": "amount"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "42956ad7-6fcf-47f8-bdae-0cc95b6d01db",
+      "kwargs": {
+        "column": "currency",
+        "value_set": [
+          "EUR"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "dc76f18f-dac4-4be7-9e4c-a00916d3b923",
+      "kwargs": {
+        "column": "method",
+        "value_set": [
+          "card",
+          "paypal",
+          "apple_pay",
+          "bank_transfer"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "30e6af46-9ca5-49f8-a4e8-3a5e77264f6c",
+      "kwargs": {
+        "column": "amount",
+        "max_value": 5000.0,
+        "min_value": 0.0,
+        "strict_min": true
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "44379618-47cc-4bd2-90cf-4e0e1a0f4236",
+      "kwargs": {
+        "column": "amount",
+        "max_value": 1000.0,
+        "min_value": 50.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_mean_to_be_between"
+    },
+    {
+      "id": "a8695c5e-a686-43f4-8ddd-5117810d7293",
+      "kwargs": {
+        "column": "amount_txt",
+        "regex": "^\\d+\\.\\d{1,2}$"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_match_regex"
+    }
+  ],
+  "id": "cc8e48a5-47e3-4ac3-9292-328dcdc36578",
+  "meta": {
+    "great_expectations_version": "1.25.0"
+  },
+  "name": "smart_payments",
+  "notes": null
+}

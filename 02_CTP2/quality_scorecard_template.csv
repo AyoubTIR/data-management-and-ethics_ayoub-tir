@@ -1,0 +1,30 @@
+dimension,rule_in_plain_words,column,how_you_measured_it,failing_rows,total_rows,score_pct,severity_high_medium_low,who_should_fix_owner_steward_custodian
+Completeness,email is filled, , ,, ,,,
+Uniqueness,customer_id is unique,customer_id,,,,,,
+Validity,,,,,,,,
+Consistency,,,,,,,,
+Accuracy,,,,,,,,
+Timeliness,,,,,,,,
+
+Completeness,email is filled,email,df['email'].isna().sum(),48,1241,96.13,Medium,Steward
+Uniqueness,customer_id is unique,customer_id,df['customer_id'].duplicated().sum() (extra rows),8,1241,99.36,High,Custodian
+Uniqueness,one person = one account (normalised email),email,"strip+lower, dropna, value_counts()>1",60,1241,95.17,Medium,Steward
+Validity,email has a valid format,email,"strip+lower, dropna, ~str.match(regex)",19,1241,98.47,Medium,Steward
+Consistency,country uses ISO-2 code (FR/DE/ES/BE),country,"notna & ~isin(FR,DE,ES,BE)",299,1241,75.91,Medium,Custodian
+Consistency,signup_date is ISO YYYY-MM-DD,signup_date,"~str.match(^\d{4}-\d{2}-\d{2}$)",303,1241,75.58,Medium,Custodian
+Validity,French postal_code has 5 digits,postal_code,"country normalised (fr/france/fra, 723 rows) & ~str.match(^\d{5}$); all failures = 4 digits (leading 0 lost)",48,1241,96.13,Medium,Custodian
+
+
+dimension,rule_in_plain_words,column,how_you_measured_it,failing_rows,total_rows,score_pct,severity_high_medium_low,who_should_fix_owner_steward_custodian
+Completeness,email is filled,email,df['email'].isna().sum(),48,1241,96.13,Medium,Steward
+Completeness,phone is filled,phone,df['phone'].isna().sum(),30,1241,97.58,Low,Steward
+Completeness,country is filled,country,df['country'].isna().sum(),37,1241,97.02,Medium,Steward
+Uniqueness,customer_id is unique,customer_id,df['customer_id'].duplicated().sum() (extra rows; 16 rows involved),8,1241,99.36,High,Custodian
+Uniqueness,one person = one account (normalised email),email,"strip+lower, dropna, value_counts()>1 (60 people, each twice)",60,1241,95.17,Medium,Steward
+Validity,email has a valid format,email,"strip+lower, dropna, ~str.match(^[^@\s]+@[^@\s]+\.[a-zA-Z]{2,}$) (28 on raw values)",19,1241,98.47,Medium,Steward
+Validity,loyalty_tier in bronze/silver/gold/platinum,loyalty_tier,"~isin(list) on raw values (4 left after strip+lower = 'Platinium')",13,1241,98.95,Medium,Custodian
+Validity,French postal_code has 5 digits,postal_code,"country normalised (fr/france/fra, 723 rows) & ~str.match(^\d{5}$); all failures = 4 digits (leading 0 lost)",48,1241,96.13,Medium,Custodian
+Consistency,country uses ISO-2 code (FR/DE/ES/BE),country,"notna & ~isin(FR,DE,ES,BE); 17 spellings for 4 countries",299,1241,75.91,Medium,Custodian
+Consistency,signup_date is ISO YYYY-MM-DD,signup_date,"~str.match(^\d{4}-\d{2}-\d{2}$); separator convention / = DD/MM and - = MM-DD (verified, undocumented)",303,1241,75.58,Medium,Custodian
+Accuracy,birth_date is plausible (not future / not before 1906),birth_date,"to_datetime ISO only (1067 checked, 174 non-ISO not checked); 3x 1899-01-01 placeholder + 5x 2031",8,1241,99.36,High,Steward
+Timeliness,data freshness is known,(none),"not measurable: no updated_at / extraction date column; to require in the data contract",,1241,,Low,Owner
