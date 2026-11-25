@@ -4,3 +4,12 @@ __pycache__/
 .venv/
 venv/
 .env
+*.pdf
+CLAUDE.md
+
+# dbt (generated files)
+target/
+logs/
+dbt_packages/
+*.duckdb
+*.duckdb.wal
