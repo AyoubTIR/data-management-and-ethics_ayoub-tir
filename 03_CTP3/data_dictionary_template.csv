@@ -1,16 +1,16 @@
 table,column,business_meaning,data_type,unit_or_format,allowed_values_or_range,nullable_Y_N,example_value,personal_data_Y_N,classification,owner,source_system
-stg_orders,order_id,,,,,,,,,,
-stg_orders,customer_id,,,,,,,,,,
-stg_orders,order_date,,,,,,,,,,
-stg_orders,status,,,,,,,,,,
-stg_orders,channel,,,,,,,,,,
-stg_orders,shipping_country,,,,,,,,,,
-stg_orders,total_amount_eur,,,,,,,,,,
-stg_payments,payment_id,,,,,,,,,,
-stg_payments,order_id,,,,,,,,,,
-stg_payments,payment_date,,,,,,,,,,
-stg_payments,method,,,,,,,,,,
-stg_payments,amount,,,,,,,,,,
-stg_payments,currency,,,,,,,,,,
-stg_payments,card_last4,,,,,,,,,,
-stg_payments,payment_status,,,,,,,,,,
+stg_orders,order_id,ID of the order,INTEGER,id,unique and not null,N,700001,N,internal,Sara Martin (Head of Sales),shop backend (raw.orders)
+stg_orders,customer_id,customer who placed the order (link to stg_customers),INTEGER,id,must exist in stg_customers,N,10410,Y,confidential,Sara Martin (Head of Sales),shop backend (raw.orders)
+stg_orders,order_date,date of the order,DATE,YYYY-MM-DD,not in the future (we found 11 nulls and dates in 2027),N,2026-04-05,N,internal,Sara Martin (Head of Sales),shop backend (raw.orders)
+stg_orders,status,status of the order (cancelled orders are kept),VARCHAR,lowercase text,pending / shipped / delivered / cancelled / returned,N,pending,N,internal,Sara Martin (Head of Sales),shop backend (raw.orders)
+stg_orders,channel,where the order was made,VARCHAR,lowercase text,web / mobile_app / marketplace,N,mobile_app,N,internal,Sara Martin (Head of Sales),shop backend (raw.orders)
+stg_orders,shipping_country,delivery country,VARCHAR,ISO 2 letters,FR / DE / ES / BE,N,FR,N,internal,Sara Martin (Head of Sales),shop backend (raw.orders)
+stg_orders,total_amount_eur,amount paid by the customer for the order,DECIMAL(10.2),euros with 2 decimals (VAT and shipping included),between 0 and 5000 (we found one negative value -49.90),N,28.22,N,confidential,Sara Martin (Head of Sales),shop backend (raw.orders)
+stg_payments,payment_id,ID of the payment,INTEGER,id,unique and not null,N,900003,N,internal,Paul Girard (Head of Finance),payment provider (raw.payments)
+stg_payments,order_id,order linked to the payment,INTEGER,id,must exist in stg_orders,N,700004,N,internal,Paul Girard (Head of Finance),payment provider (raw.payments)
+stg_payments,payment_date,date of the payment or of the refund,DATE,YYYY-MM-DD,after the order date and not in the future,N,2025-11-03,N,internal,Paul Girard (Head of Finance),payment provider (raw.payments)
+stg_payments,method,payment method,VARCHAR,lowercase text,card / paypal / apple_pay / bank_transfer,N,apple_pay,N,internal,Paul Girard (Head of Finance),payment provider (raw.payments)
+stg_payments,amount,amount paid or refunded (always positive),DECIMAL(12.2),euros with 2 decimals NOT cents,between 0 and 5000 (if values are x100 it is the cents bug),N,54.50,N,confidential,Paul Girard (Head of Finance),payment provider (raw.payments)
+stg_payments,currency,currency of the payment,VARCHAR,ISO 3 letters,EUR only,N,EUR,N,internal,Paul Girard (Head of Finance),payment provider (raw.payments)
+stg_payments,card_last4,last 4 digits of the card (never more),VARCHAR,4 digits,should be filled only for card payments (not the case in the data),Y,6552,Y,confidential,Paul Girard (Head of Finance),payment provider (raw.payments)
+stg_payments,payment_status,captured = money received / refunded = money given back,VARCHAR,lowercase text,captured / refunded,N,captured,N,internal,Paul Girard (Head of Finance),payment provider (raw.payments)
