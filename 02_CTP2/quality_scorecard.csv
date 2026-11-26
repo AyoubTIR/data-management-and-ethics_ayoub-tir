@@ -1,0 +1,13 @@
+dimension,rule_in_plain_words,column,how_you_measured_it,failing_rows,total_rows,score_pct,severity_high_medium_low,who_should_fix_owner_steward_custodian
+Completeness,email is filled,email,isna().sum(),48,1241,96.13,Medium,Steward
+Completeness,phone is filled,phone,isna().sum(),30,1241,97.58,Low,Steward
+Completeness,country is filled,country,isna().sum(),37,1241,97.02,Medium,Steward
+Uniqueness,customer_id is unique,customer_id,duplicated().sum() (8 extra rows / 16 rows involved),8,1241,99.36,High,Custodian
+Uniqueness,one person = one account,email,email strip + lower then value_counts() > 1 (60 people with 2 accounts),60,1241,95.17,Medium,Steward
+Validity,email has a valid format,email,str.match(regex) after strip + lower,19,1241,98.47,Medium,Steward
+Validity,loyalty_tier is bronze / silver / gold / platinum,loyalty_tier,isin(list) on raw values (still 4 wrong after lower = platinium),13,1241,98.95,Medium,Custodian
+Validity,french postal code has 5 digits,postal_code,only FR customers (723) + str.match(5 digits) - all errors have 4 digits (first 0 lost),48,1241,96.13,Medium,Custodian
+Consistency,country is an ISO code (FR / DE / ES / BE),country,notna and not isin(list) - 17 spellings for 4 countries,299,1241,75.91,Medium,Custodian
+Consistency,signup_date is YYYY-MM-DD,signup_date,str.match(YYYY-MM-DD) - other formats with / and -,303,1241,75.58,Medium,Custodian
+Accuracy,birth_date is realistic (not in the future / not before 1906),birth_date,to_datetime on ISO dates only (1067 checked) - 3 x 1899-01-01 and 5 dates in 2031,8,1241,99.36,High,Steward
+Timeliness,we know when the data was updated,none,cannot be measured - no updated_at column so it should be asked in the data contract,n/a,1241,n/a,Low,Owner

@@ -42,7 +42,7 @@ models:
         tags: ['pii']
         meta: {classification: restricted}
       - name: city
-        description: "City of the delivery address. Indirect identifier when combined with name or birth date."
+        description: "City of the customer. Can identify a person if we combine it with the name or the birth date."
         tags: ['pii']
         meta: {classification: confidential}
       - name: country_code
@@ -80,7 +80,7 @@ models:
       # TODO: document customer_id, order_date, status, channel, shipping_country, total_amount_eur
       # TODO: test accepted_values on status
       - name: customer_id
-        description: "Customer who placed the order (FK to stg_customers). Pseudonymous identifier = still personal data under GDPR."
+        description: "Customer who made the order (link to stg_customers). It is a pseudonym, so it is still personal data (GDPR)."
         tags: ['pii']
         meta: {classification: confidential}
       - name: order_date
@@ -143,13 +143,13 @@ models:
         description: "Payment method: card, paypal, apple_pay or bank_transfer."
         meta: {classification: internal}
       - name: amount
-        description: "Payment amount in EUROS with 2 decimals (e.g. 184.31), NOT in cents. Always positive: the direction is given by payment_status."
+        description: "Amount paid or refunded, in EUROS with 2 decimals (ex: 184.31), NOT in cents. Always positive, payment_status tells if it is a payment or a refund."
         meta: {classification: confidential, unit: EUR, decimals: 2}
       - name: currency
         description: "ISO 4217 currency code. Always EUR."
         meta: {classification: internal}
       - name: card_last4
-        description: "Last 4 digits of the payment card (null for non-card methods). Never store more digits (PCI-DSS)."
+        description: "Last 4 digits of the card. Should only be filled for card payments, but in the data it is also filled for paypal / apple_pay and empty for some card payments. Never store the full number (PCI-DSS)."
         tags: ['pii']
         meta: {classification: confidential}
       - name: payment_status

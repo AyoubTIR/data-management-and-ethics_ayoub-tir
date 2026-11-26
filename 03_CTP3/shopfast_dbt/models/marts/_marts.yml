@@ -15,7 +15,7 @@ models:
         description: "Unique identifier of the order."
         data_tests: [unique, not_null]
       - name: customer_id
-        description: "Customer who placed the order (FK to dim_customers). Pseudonymous = still personal data."
+        description: "Customer who made the order (link to dim_customers). Pseudonym = still personal data."
         tags: ['pii']
         meta: {classification: confidential}
       - name: order_date
@@ -78,7 +78,7 @@ models:
       - name: lifetime_orders
         description: "Number of orders ever placed by the customer (all statuses, including cancelled)."
       - name: last_order_date
-        description: "Date of the most recent order (DATE). Null if the customer never ordered. WARNING: includes cancelled orders, so it is NOT enough to compute 'active customer' (see glossary: active_customer)."
+        description: "Date of the most recent order (DATE). Null if the customer never ordered. Careful: cancelled orders are included, so we cannot use it alone for 'active customer' (see glossary)."
       - name: lifetime_net_revenue_eur
         description: "Sum of net_revenue_eur over all orders of the customer, in EUROS excluding VAT (0 if none)."
         meta: {classification: confidential}
